@@ -41,6 +41,17 @@
       :compiler-stats true
       :parallel-build true}}
 
+    {:id "qt-exp"
+     :source-paths ["src"]
+     :compiler
+     {:main app.core
+      :output-to "target/qt-exp.js"
+      :optimizations :simple
+      :source-map false
+      :pretty-print false
+      :compiler-stats true
+      :parallel-build true}}
+
     {:id "none"
      :source-paths ["src" "examples" "test"]
      :compiler

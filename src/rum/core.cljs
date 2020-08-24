@@ -173,26 +173,27 @@
 
 (defn ^:no-doc build-defc [render-body mixins display-name]
   (cond
-    (= mixins [static])
-    (let [class (fn [props]
-                  (apply render-body (aget props ":rum/args")))
-          _     (aset class "displayName" display-name)
-          memo-class (react-memo class)
-          ctor  (fn [& args]
-                  (.createElement js/React memo-class #js {":rum/args" args}))]
-      (with-meta ctor {:rum/class memo-class}))
+    ;; TODO: mixins support
+    ;(= mixins [static])
+    ;(let [class (fn [props]
+    ;              (apply render-body (aget props ":rum/args")))
+    ;      _     (aset class "displayName" display-name)
+    ;      memo-class (react-memo class)
+    ;      ctor  (fn [& args]
+    ;              (.createElement js/React memo-class #js {":rum/args" args}))]
+    ;  (with-meta ctor {:rum/class memo-class}))
 
     (empty? mixins)
     (let [class (fn [props]
-                  (apply render-body (aget props ":rum/args")))
+                  (apply render-body nil)) ;(aget props ":rum/args")))
           _     (aset class "displayName" display-name)
           ctor  (fn [& args]
-                  (.createElement js/React class #js {":rum/args" args}))]
-      (with-meta ctor {:rum/class class}))
+                  (.createRumQuickItem js/RumQuick class args))]
+      (with-meta ctor {:rum/class class}))))
 
-    :else
-    (let [render (fn [state] [(apply render-body (:rum/args state)) state])]
-      (build-ctor render mixins display-name))))
+    ;:else
+    ;(let [render (fn [state] [(apply render-body (:rum/args state)) state])]
+    ;  (build-ctor render mixins display-name))))
 
 (defn ^:no-doc build-defcs [render-body mixins display-name]
   (let [render (fn [state] [(apply render-body state (:rum/args state)) state])]
@@ -225,7 +226,10 @@
 (defn- render-all [queue]
   (doseq [comp queue
           :when (and (some? comp) (not (gobj/get comp ":rum/unmounted?")))]
-    (.forceUpdate comp)))
+    ; TODO: render here
+    (println "Render this twice!")
+    (println comp)))
+    ;(.forceUpdate comp)))
 
 (defn- render []
   (let [queue @render-queue]
